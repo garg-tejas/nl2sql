@@ -22,16 +22,16 @@ A modular, interpretable pipeline that converts natural language questions into 
                                 ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                     Pipeline Modules                            │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
-│  │   Schema     │→ │  Reasoning   │→ │     SQL      │          │
-│  │  Processor   │  │   (CoT)      │  │  Generator   │          │
-│  └──────────────┘  └──────────────┘  └──────────────┘          │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐           │
+│  │   Schema     │→ │  Reasoning   │→ │     SQL      │           │
+│  │  Processor   │  │   (CoT)      │  │  Generator   │           │
+│  └──────────────┘  └──────────────┘  └──────────────┘           │
 │                                              │                  │
 │                                              ▼                  │
-│                    ┌──────────────┐  ┌──────────────┐          │
-│                    │   Answer     │← │   Verifier   │          │
-│                    │  Generator   │  │ & Corrector  │          │
-│                    └──────────────┘  └──────────────┘          │
+│                    ┌──────────────┐  ┌──────────────┐           │
+│                    │   Answer     │← │   Verifier   │           │
+│                    │  Generator   │  │ & Corrector  │           │
+│                    └──────────────┘  └──────────────┘           │
 └─────────────────────────────────────────────────────────────────┘
                                 │
                                 ▼
@@ -121,3 +121,4 @@ We intentionally designed this as a **query generation** tool rather than an exe
 ## License
 
 MIT License
+
