@@ -36,7 +36,7 @@ A modular, interpretable pipeline that converts natural language questions into 
                                 │
                                 ▼
                     HuggingFace Inference API
-                    (Qwen2.5-Coder-32B-Instruct)
+                    (Qwen/Qwen3-Coder-30B-A3B-Instruct)
 ```
 
 ## Pipeline Steps
@@ -95,7 +95,7 @@ We intentionally designed this as a **query generation** tool rather than an exe
 ## Tech Stack
 
 - **Backend:** Python, Flask
-- **LLM:** Qwen2.5-Coder-32B-Instruct (via HuggingFace Inference API)
+- **LLM:** Qwen/Qwen3-Coder-30B-A3B-Instruct (via HuggingFace Inference API)
 - **SQL Parsing:** sqlparse
 - **Frontend:** Vanilla HTML/CSS/JavaScript
 
