@@ -290,10 +290,10 @@ CREATE TABLE Artist (
                 if (data.success) {
                     displayResults(data);
                 } else {
-                    showError(data.error);
+                    showError(data.error, data.security_blocked);
                 }
             } catch (e) {
-                showError('Connection failed: ' + e.message);
+                showError('Connection failed: ' + e.message, false);
             } finally {
                 btn.classList.remove('loading');
                 btn.disabled = false;
@@ -336,13 +336,14 @@ CREATE TABLE Artist (
             document.getElementById('copy-btn').style.display = 'inline-flex';
         }
 
-        function showError(msg) {
+        function showError(msg, isSecurityBlock = false) {
+            const title = isSecurityBlock ? 'Request Blocked' : 'Something went wrong';
             document.getElementById('results-container').innerHTML = `
-                <div class="error-state">
+                <div class="error-state ${isSecurityBlock ? 'security-block' : ''}">
                     <div class="error-icon"></div>
-                    <h3>Something went wrong</h3>
+                    <h3>${title}</h3>
                     <p>${escapeHtml(msg)}</p>
-                    <button class="btn-retry" onclick="generateSQL()" style="margin-top: 20px;">🔄 Retry</button>
+                    ${!isSecurityBlock ? '<button class="btn-retry" onclick="generateSQL()" style="margin-top: 20px;">🔄 Retry</button>' : '<button class="btn-retry" onclick="showTab(\'question\')" style="margin-top: 20px;">← Modify Question</button>'}
                 </div>
             `;
             document.getElementById('copy-btn').style.display = 'none';

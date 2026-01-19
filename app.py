@@ -13,18 +13,13 @@ Security features:
 from flask import Flask, render_template, request, jsonify
 import traceback
 
-from pipeline.schema_processor import format_schema_for_prompt
-from pipeline.reasoning import plan_query
-from pipeline.sql_generator import generate_sql, format_sql
-from pipeline.verifier import verify_and_correct
-from pipeline.answer_generator import generate_answer
-from security import SecureLLMPipeline, SQL_SAFETY_DISCLAIMER
+from pipeline.core import NL2SQLPipeline
 from config import ENABLE_SECURITY_LOGGING
 
 app = Flask(__name__)
 
-# Initialize security pipeline
-security = SecureLLMPipeline(enable_logging=ENABLE_SECURITY_LOGGING)
+# Initialize the pipeline (same instance used everywhere)
+pipeline = NL2SQLPipeline(enable_security_logging=ENABLE_SECURITY_LOGGING)
 
 
 @app.route('/')
@@ -53,80 +48,38 @@ def generate():
     try:
         data = request.get_json()
         
-        schema = data.get('schema', '').strip()
-        question = data.get('question', '').strip()
+        schema = data.get('schema', '')
+        question = data.get('question', '')
         
-        if not schema:
-            return jsonify({
-                'success': False,
-                'error': 'Please provide a database schema'
-            }), 400
+        # Run the pipeline
+        result = pipeline.generate(question, schema, include_answer=True)
         
-        if not question:
-            return jsonify({
-                'success': False,
-                'error': 'Please provide a question'
-            }), 400
-        
-        # Security Layer: Validate and sanitize inputs
-        validation = security.validate_input(question, schema)
-        
-        if not validation.is_safe:
-            return jsonify({
-                'success': False,
-                'error': validation.rejection_reason,
-                'security_blocked': True
-            }), 400
-        
-        # Use sanitized input
-        question = validation.sanitized_input
-        
-        # Step 1: Process and format the schema
-        formatted_schema = format_schema_for_prompt(schema)
-        
-        # Step 2: Generate chain-of-thought reasoning
-        reasoning = plan_query(question, formatted_schema)
-        
-        # Security: Validate LLM output for leakage
-        reasoning = security.validate_output(reasoning)
-        
-        # Step 3: Generate SQL based on reasoning
-        sql = generate_sql(question, formatted_schema, reasoning)
-        
-        # Step 4: Verify and correct SQL
-        verification = verify_and_correct(sql, question, schema)
-        
-        # Format the final SQL
-        final_sql = format_sql(verification.sql)
-        
-        # Security: Validate final SQL output
-        final_sql = security.validate_output(final_sql)
-        
-        # Step 5: Generate human-readable answer
-        answer = generate_answer(question, final_sql, reasoning)
-        
-        # Security: Validate answer output
-        answer = security.validate_output(answer)
+        if not result.success:
+            # Different response for security blocks vs other errors
+            if result.security_blocked:
+                return jsonify({
+                    'success': False,
+                    'error': result.error,
+                    'security_blocked': True
+                }), 400
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': result.error
+                }), 400
         
         return jsonify({
             'success': True,
-            'sql': final_sql,
-            'reasoning': reasoning,
-            'answer': answer,
+            'sql': result.sql,
+            'reasoning': result.reasoning,
+            'answer': result.answer,
             'verification': {
-                'is_valid': verification.is_valid,
-                'corrections_made': verification.corrections_made,
-                'notes': verification.errors
+                'is_valid': result.is_valid,
+                'corrections_made': result.corrections_made,
+                'notes': result.verification_notes
             },
-            'disclaimer': SQL_SAFETY_DISCLAIMER
+            'disclaimer': result.disclaimer
         })
-        
-    except ValueError as e:
-        # Expected errors (API issues, etc.)
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 400
         
     except Exception as e:
         # Unexpected errors
@@ -153,9 +106,6 @@ if __name__ == '__main__':
     print("  - Output monitoring for data leakage")
     print(f"  - Security logging: {'enabled' if ENABLE_SECURITY_LOGGING else 'disabled'}")
     print("\nStarting server at http://localhost:5000")
-    print("\nMake sure you have:")
-    print("1. Added your HuggingFace API token to .env file")
-    print("2. Installed requirements: pip install -r requirements.txt")
     print("\n" + "=" * 60 + "\n")
     
     app.run(debug=True, port=5000)
