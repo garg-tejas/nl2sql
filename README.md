@@ -57,7 +57,7 @@ A modular, interpretable pipeline that converts natural language questions into 
 
 ## Setup
 
-**This project uses [uv](https://docs.astral.sh/uv/) only.** Dependencies are managed via `pyproject.toml` and `uv.lock`; `requirements.txt` has been removed.
+**This project uses [uv](https://docs.astral.sh/uv/) only.** Dependencies are managed via `pyproject.toml` and `uv.lock`.
 
 1. **Install dependencies:**
 
