@@ -57,7 +57,7 @@ A modular, interpretable pipeline that converts natural language questions into 
 
 ## Setup
 
-**This project uses [uv](https://docs.astral.sh/uv/) only.** Dependencies are managed via `pyproject.toml` and `uv.lock`.
+**This project uses [uv](https://docs.astral.sh/uv/) for local development.** Dependencies are managed via `pyproject.toml` and `uv.lock`. A `requirements.txt` is included for Vercel deployment so `pip install` on Linux fetches the correct binary wheels (e.g. for `pydantic_core`).
 
 1. **Install dependencies:**
 
