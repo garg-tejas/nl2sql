@@ -5,7 +5,7 @@ Breaks down natural language questions into logical steps for SQL generation.
 """
 
 from config import REASONING_PROMPT
-from utils.hf_client import get_client
+from utils.openai_client import get_client
 
 
 def plan_query(question: str, formatted_schema: str) -> str:

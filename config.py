@@ -6,13 +6,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# HuggingFace Configuration
+# Z.AI API Configuration (OpenAI SDK compatible)
 
-HF_API_TOKEN = os.getenv("HF_API_TOKEN", "")
+ZAI_API_KEY = os.getenv("ZAI_API_KEY", "")
 
 # Model Configuration
 
-MODEL_NAME = os.getenv("MODEL_NAME", "Qwen/Qwen3-Coder-30B-A3B-Instruct")
+MODEL_NAME = os.getenv("MODEL_NAME", "glm-4.7-flash")
 
 
 

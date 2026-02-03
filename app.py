@@ -2,7 +2,7 @@
 NL-to-SQL Pipeline - Flask Web Application
 
 A modular pipeline for converting natural language to SQL using
-open-source LLMs via HuggingFace Inference API.
+LLMs via Z.AI API (OpenAI SDK compatible).
 
 Security features:
 - Prompt injection detection and prevention
@@ -10,8 +10,9 @@ Security features:
 - Output monitoring for data leakage
 """
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_from_directory
 import traceback
+import os
 
 from pipeline.core import NL2SQLPipeline
 from config import ENABLE_SECURITY_LOGGING
@@ -94,6 +95,27 @@ def generate():
 def health():
     """Health check endpoint."""
     return jsonify({'status': 'ok'})
+
+
+# Serve static files from public/ directory (for Vercel compatibility)
+# This allows /styles.css to work locally, matching Vercel's behavior
+# Must be defined LAST so specific routes are matched first
+@app.route('/<path:filename>')
+def serve_public(filename):
+    """Serve static files from public/ directory."""
+    # Only serve files with static file extensions
+    static_extensions = ('.css', '.js', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.woff', '.woff2', '.ttf', '.eot')
+    if not filename.lower().endswith(static_extensions):
+        from flask import abort
+        abort(404)
+    
+    public_dir = os.path.join(os.path.dirname(__file__), 'public')
+    file_path = os.path.join(public_dir, filename)
+    if os.path.exists(file_path):
+        return send_from_directory(public_dir, filename)
+    # If file doesn't exist in public/, let Flask handle 404
+    from flask import abort
+    abort(404)
 
 
 if __name__ == '__main__':

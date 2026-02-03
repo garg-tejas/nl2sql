@@ -6,7 +6,7 @@ Generates SQL queries from natural language questions using LLM.
 
 import re
 from config import SQL_GENERATION_PROMPT
-from utils.hf_client import get_client
+from utils.openai_client import get_client
 
 
 def generate_sql(question: str, formatted_schema: str, reasoning: str) -> str:

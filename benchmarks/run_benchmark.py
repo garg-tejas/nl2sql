@@ -95,11 +95,11 @@ Examples:
         print("Make sure you're running from the project root.")
         return 1
     
-    # Check HF API token
-    from config import HF_API_TOKEN
-    if not HF_API_TOKEN:
-        print("[ERROR] HuggingFace API token not set!")
-        print("Add your token to .env file: HF_API_TOKEN=hf_...")
+    # Check Z.AI API key
+    from config import ZAI_API_KEY
+    if not ZAI_API_KEY:
+        print("[ERROR] Z.AI API key not set!")
+        print("Add your API key to .env file: ZAI_API_KEY=your-key...")
         return 1
     
     # Create pipeline

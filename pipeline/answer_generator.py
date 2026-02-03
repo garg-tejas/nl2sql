@@ -5,7 +5,7 @@ Generates human-readable explanations of the SQL query and what it does.
 """
 
 from config import ANSWER_GENERATION_PROMPT
-from utils.hf_client import get_client
+from utils.openai_client import get_client
 
 
 def generate_answer(question: str, sql: str, reasoning: str) -> str:

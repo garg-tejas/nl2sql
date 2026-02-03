@@ -8,7 +8,7 @@ import re
 import sqlparse
 from typing import Tuple, List, Optional
 from config import SQL_CORRECTION_PROMPT, MAX_CORRECTION_ATTEMPTS
-from utils.hf_client import get_client
+from utils.openai_client import get_client
 from pipeline.schema_processor import parse_schema
 
 

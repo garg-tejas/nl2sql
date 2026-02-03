@@ -129,13 +129,13 @@ Respond ONLY with the JSON object, no other text."""
 
 
 def create_judge_client():
-    """Create the HuggingFace client for judging."""
+    """Create the OpenAI client for judging."""
     import sys
     from pathlib import Path
     sys.path.insert(0, str(Path(__file__).parent.parent))
     
-    from utils.hf_client import HuggingFaceClient
-    return HuggingFaceClient()
+    from utils.openai_client import OpenAIClient
+    return OpenAIClient()
 
 
 def parse_judge_response(response: str) -> dict:
@@ -183,7 +183,7 @@ def judge_sql_equivalence(
         question: The natural language question
         gold_sql: The reference/gold SQL query
         predicted_sql: The generated SQL query to evaluate
-        client: Optional HuggingFace client (creates one if not provided)
+        client: Optional OpenAI client (creates one if not provided)
         
     Returns:
         JudgeResult with equivalence determination and reasoning
@@ -200,7 +200,7 @@ def judge_sql_equivalence(
     
     try:
         # Call LLM
-        response = client.generate(prompt, max_new_tokens=1500, temperature=0.0)
+        response = client.generate_text(prompt, max_tokens=1500, temperature=0.0)
         
         # Parse response
         result = parse_judge_response(response)
@@ -233,7 +233,7 @@ def batch_judge(
     
     Args:
         examples: List of dicts with 'question', 'gold_sql', 'predicted_sql'
-        client: Optional HuggingFace client
+        client: Optional OpenAI client
         verbose: Whether to print progress
         
     Returns:
